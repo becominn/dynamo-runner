@@ -1,8 +1,29 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import * as aws from "aws-sdk"
 
-export default function Home() {
+const Region = process.env.REGION!;
+const BlogTableName = process.env.BLOG_TABLE_NAME!;
+const dynamodb = new aws.DynamoDB.DocumentClient({
+  apiVersion: "2012-08-10",
+  region: Region,
+  signatureVersion: "v4",
+});
+
+export default async function Home(){
+
+  const result = await dynamodb
+    .query({
+      TableName: BlogTableName,
+      KeyConditionExpression: "key = 1"
+    })
+    .promise();
+
+  const message: String = result.Items![0] as String;
+  console.log(message);
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -13,7 +34,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+        <a>{message}</a>
         </h1>
 
         <p className={styles.description}>
