@@ -44,7 +44,13 @@ export const getServerSideProps = async () => {
     .query({
       TableName: TableName,
       Limit: 1,
-      KeyConditionExpression: "#key = 1",
+      KeyConditionExpression: "#key = :key",
+      ExpressionAttributeNames:{
+        "#key": "key"
+      },
+      ExpressionAttributeValues: {
+        ":key": "1"
+      }
     })
     .promise();
 
